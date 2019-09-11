@@ -20,11 +20,19 @@ dependencies {
   implementation('com.facebook.react:react-native:+') {
     exclude group: 'com.android.support'
   }
+  
   def supportLibVersion = safeExtGet('supportLibVersion', '28.0.0')
-  def supportLibMajorVersion = supportLibVersion.split('\\.')[0] as int
-  def appCompatLibName =  (supportLibMajorVersion < 20) ? "androidx.appcompat:appcompat" : "com.android.support:appcompat-v7"
-
-  implementation "$appCompatLibName:$supportLibVersion"
+  def androidXVersion = safeExtGet('androidXVersion', null)
+  if (supportLibVersion && androidXVersion == null) {
+    implementation "com.android.support:appcompat-v7:$supportLibVersion"
+  } else {
+    def defaultAndroidXVersion = "1.+"
+    if (androidXVersion == null) {
+      androidXVersion = defaultAndroidXVersion
+    }
+    implementation "androidx.appcompat:appcompat:$androidXVersion"
+  }
+  
   implementation "com.google.android.gms:play-services-base:${safeExtGet('playServicesVersion', '16.1.0')}"
   implementation "com.google.android.gms:play-services-maps:${safeExtGet('playServicesVersion', '16.1.0')}"
   implementation 'com.google.maps.android:android-maps-utils:0.5'
